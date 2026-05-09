@@ -1,0 +1,13 @@
+// applaunch-web/next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  // Allow images from Supabase storage
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "*.supabase.co" },
+    ],
+  },
+};
+
+export default nextConfig;

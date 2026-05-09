@@ -1,0 +1,18 @@
+# applaunch-api/railway.worker.toml
+# AL-11: Railway deployment config — Celery worker service
+# This is a SEPARATE Railway service pointing to the same repo/image.
+# In Railway dashboard: create a new service, same repo, override start command.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Worker consumes from both queues; concurrency=2 to limit resource use
+startCommand = "celery -A workers.celery_app worker --loglevel=info -Q build,publish --concurrency=2"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+
+# Note: The worker needs access to the Docker socket to spawn Android builder containers.
+# On Railway, this requires a privileged service or a remote Docker host setup.
+# For production: consider using Railway's Docker-in-Docker or an external build runner.

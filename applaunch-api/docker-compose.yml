@@ -1,0 +1,48 @@
+# applaunch-api/docker-compose.yml
+# AL-10: Local development environment
+# Run: docker compose up --build
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app          # Hot-reload: mounts source into container
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    build: .
+    command: celery -A workers.celery_app worker --loglevel=info -Q build,publish --concurrency=2
+    env_file: .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock   # Worker spawns Android builder containers
+      - /tmp/builds:/tmp/builds                      # Shared build workspace
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:

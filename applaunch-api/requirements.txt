@@ -1,0 +1,34 @@
+# applaunch-api/requirements.txt
+
+# Web framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+python-multipart==0.0.12       # Required for File/Form uploads
+
+# Pydantic v2
+pydantic==2.10.3
+pydantic-settings==2.7.0
+
+# Auth
+PyJWT==2.10.1
+
+# Database
+supabase==2.10.0
+
+# Task queue
+celery[redis]==5.4.0
+redis==5.2.1
+
+# AWS
+boto3==1.35.87
+
+# Docker SDK (for spawning build containers from Celery worker)
+docker==7.1.0
+
+# Async Redis (for SSE pub/sub streaming)
+redis[asyncio]==5.2.1
+
+# Google APIs (Phase 2 — Play Store publish)
+google-api-python-client==2.155.0
+google-auth==2.37.0
+google-auth-httplib2==0.2.0
